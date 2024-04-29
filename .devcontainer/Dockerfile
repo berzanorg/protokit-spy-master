@@ -1,5 +1,5 @@
-FROM node:20-alpine
+FROM node:18-bookworm
 
-RUN apk add git
+RUN apt update -y && apt install -y git
 
 RUN corepack enable pnpm
