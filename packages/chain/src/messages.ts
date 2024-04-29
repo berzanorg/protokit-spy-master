@@ -50,6 +50,21 @@ export class Messages extends RuntimeModule<Record<string, never>> {
 
     @runtimeMethod()
     public registerAgent(agentId: AgentId, securityCode: SecurityCode) {
+        const securityCodeContent = securityCode.getInner()
+
+        let messageLength = Field.from(0)
+        for (let i = 0; i < 128; i++) {
+            const character = securityCodeContent.values[i]
+
+            messageLength = Provable.if(
+                Bool.and(messageLength.equals(0), character.value.equals(0)),
+                Field.from(i),
+                messageLength,
+            )
+        }
+
+        assert(messageLength.equals(Field.from(2)), "security is not 2 characters")
+
         this.securityCodes.set(agentId, securityCode)
     }
 
